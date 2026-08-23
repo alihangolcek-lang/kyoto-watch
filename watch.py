@@ -43,7 +43,7 @@ _PROP_CACHE = {}
 
 def clean(h):
     t = TAG_RE.sub(" ", h)
-    t = t.replace("&yen;", "¬•").replace("&nbsp;", " ").replace("&amp;", "&")
+    t = t.replace("&yen;", "\u00a5").replace("&nbsp;", " ").replace("&amp;", "&")
     return re.sub(r"\s+", " ", t).strip()
 
 
@@ -153,23 +153,23 @@ BTN = ('<table cellpadding="0" cellspacing="0" border="0" style="margin:14px 0;"
        '</td></tr></table>')
 
 NOTE = ('<div style="font-size:12px;color:#888;margin-bottom:9px;">'
-        'Form apartman adƒ± ve oda numarasƒ± dolu a√ßƒ±lƒ±r. Kalan alanlar i√ßin yer imi '
-        '√ßubuƒüundaki &quot;Kyoto formu doldur&quot; bookmarklet\'ine tƒ±kla. '
-        'Sonra g√∂zden ge√ßirip Submit\'e bas.</div>')
+        'Form apartman ad\u0131 ve oda numaras\u0131 dolu a\u00e7\u0131l\u0131r. Kalan alanlar i\u00e7in yer imi '
+        '\u00e7ubu\u011fundaki &quot;Kyoto formu doldur&quot; bookmarklet\'ine t\u0131kla. '
+        'Sonra g\u00f6zden ge\u00e7irip Submit\'e bas.</div>')
 
 STYLE = {
-    1: ("#d32f2f", "15px 34px", "17px", "‚ö° HEMEN REZERVE ET"),
+    1: ("#d32f2f", "15px 34px", "17px", "\u26a1 HEMEN REZERVE ET"),
     2: ("#ef6c00", "13px 28px", "16px", "Rezerve et"),
     3: ("#5f6a7d", "11px 22px", "14px", "Rezervasyon formu"),
     4: ("#5f6a7d", "11px 22px", "14px", "Rezervasyon formu"),
 }
-TIER_NAME = {1: "Studio ¬∑ ≈üu an m√ºsait", 2: "Payla≈üƒ±mlƒ± ¬∑ ≈üu an m√ºsait",
-             3: "Studio ¬∑ yakƒ±nda", 4: "Payla≈üƒ±mlƒ± ¬∑ yakƒ±nda"}
+TIER_NAME = {1: "Studio \u00b7 \u015fu an m\u00fcsait", 2: "Payla\u015f\u0131ml\u0131 \u00b7 \u015fu an m\u00fcsait",
+             3: "Studio \u00b7 yak\u0131nda", 4: "Payla\u015f\u0131ml\u0131 \u00b7 yak\u0131nda"}
 
 
 def card(r, tier):
     bg, pad, fs, txt = STYLE[tier]
-    tip = "Studio Apartment" if r["rtype"] == "STUDIO" else "Payla≈üƒ±mlƒ± (Shared house)"
+    tip = "Studio Apartment" if r["rtype"] == "STUDIO" else "Payla\u015f\u0131ml\u0131 (Shared house)"
     return (
         '<div style="border:1px solid #e0e0e0;border-radius:8px;padding:16px 19px;'
         'margin-bottom:16px;">'
@@ -180,28 +180,28 @@ def card(r, tier):
         '<tr><td style="padding:2px 12px 2px 0;color:#777;">Kira</td>'
         '<td><strong>%s / ay</strong></td></tr>'
         '<tr><td style="padding:2px 12px 2px 0;color:#777;">Durum</td><td>%s</td></tr>'
-        '<tr><td style="padding:2px 12px 2px 0;color:#777;">M√ºsait tarih</td>'
+        '<tr><td style="padding:2px 12px 2px 0;color:#777;">M\u00fcsait tarih</td>'
         '<td>%s</td></tr></table>%s%s'
         '<div style="font-size:13px;"><a href="%s" style="color:#1565c0;">'
-        'Odanƒ±n ilan sayfasƒ±</a></div></div>'
+        'Odan\u0131n ilan sayfas\u0131</a></div></div>'
         % ("19px" if tier == 1 else "17px", r["room"], tip, r["rent"],
            r["status"], r["date"] if r["date"].strip("- ") else "Hemen",
            BTN.format(bg=bg, url=r["reserve"], pad=pad, fs=fs,
-                      txt="%s ‚Äî %s" % (txt, r["room"])),
+                      txt="%s \u2014 %s" % (txt, r["room"])),
            NOTE, r["link"]))
 
 
 def build_mail(groups, top):
     heads = {
-        1: ("üî•üè† STUDIO M√úSAƒ∞T ‚Äî HEMEN REZERVASYON YAP! (%d adet)",
-            "üî• Bƒ∞Rƒ∞NCƒ∞ TERCƒ∞Hƒ∞N √áIKTI ‚Äî M√úSAƒ∞T STUDIO APARTMENT. Hemen rezervasyon yap:",
+        1: ("\U0001f525\U0001f3e0 STUDIO M\u00dcSA\u0130T \u2014 HEMEN REZERVASYON YAP! (%d adet)",
+            "\U0001f525 B\u0130R\u0130NC\u0130 TERC\u0130H\u0130N \u00c7IKTI \u2014 M\u00dcSA\u0130T STUDIO APARTMENT. Hemen rezervasyon yap:",
             "#c62828"),
-        2: ("üö® M√ºsait oda var ‚Äî payla≈üƒ±mlƒ± (2. tercih) (%d adet)",
-            "≈ûu an kiralanabilir oda var. Payla≈üƒ±mlƒ±, yani ikinci tercihin ‚Äî "
-            "studio beklemek istersen acele etmene gerek yok, ama oda hƒ±zlƒ± gidebilir:",
+        2: ("\U0001f6a8 M\u00fcsait oda var \u2014 payla\u015f\u0131ml\u0131 (2. tercih) (%d adet)",
+            "\u015eu an kiralanabilir oda var. Payla\u015f\u0131ml\u0131, yani ikinci tercihin \u2014 "
+            "studio beklemek istersen acele etmene gerek yok, ama oda h\u0131zl\u0131 gidebilir:",
             "#e65100"),
-        3: ("üîî Kyoto Apartment: yakƒ±nda m√ºsait oda deƒüi≈üikliƒüi (%d adet)",
-            "Bilgi ama√ßlƒ± ‚Äî ileri tarihli listede deƒüi≈üiklik var (acil deƒüil):",
+        3: ("\U0001f514 Kyoto Apartment: yak\u0131nda m\u00fcsait oda de\u011fi\u015fikli\u011fi (%d adet)",
+            "Bilgi ama\u00e7l\u0131 \u2014 ileri tarihli listede de\u011fi\u015fiklik var (acil de\u011fil):",
             "#455a64"),
     }
     key = top if top in heads else 3
@@ -229,8 +229,8 @@ def build_mail(groups, top):
                            r["reserve"], r["link"]))
         text.append("")
     html.append('<p style="font-size:13px;color:#777;border-top:1px solid #eee;'
-                'padding-top:12px;">Takip 10 dakikada bir GitHub Actions √ºzerinde '
-                '√ßalƒ±≈üƒ±yor.<br><a href="%s" style="color:#1565c0;">Arama sayfasƒ±</a>'
+                'padding-top:12px;">Takip 10 dakikada bir GitHub Actions \u00fczerinde '
+                '\u00e7al\u0131\u015f\u0131yor.<br><a href="%s" style="color:#1565c0;">Arama sayfas\u0131</a>'
                 '</p></div>' % URL)
     text.append("Arama sayfasi: " + URL)
     return subject, "\n".join(text), "".join(html)
@@ -266,7 +266,7 @@ def main():
         print("fetch failed: %s (ust uste %d)" % (e, h["fail_streak"]),
               file=sys.stderr)
         if should_alert(h["fail_streak"], FAIL_ESCALATE):
-            send("‚ö†Ô∏è Kyoto Apartment takibi √áALI≈ûMIYOR ‚Äî oda bildirimleri durdu",
+            send("\u26a0\ufe0f Kyoto Apartment takibi \u00c7ALI\u015eMIYOR \u2014 oda bildirimleri durdu",
                  "Oda takibi calismiyor. Yeni oda cikSA BILE mail GELMEYECEK.\n\n"
                  "Sebep: %s\nUst uste basarisiz tur: %d\nSon basarili kontrol: %s\n\n"
                  "Siteye erisim engellenmis veya site kapali olabilir.\n"
@@ -280,7 +280,7 @@ def main():
         h = health(False, "parse failed: room tables not found")
         print("parse failed (ust uste %d)" % h["fail_streak"], file=sys.stderr)
         if should_alert(h["fail_streak"], PARSE_ESCALATE):
-            send("‚ö†Ô∏è Kyoto Apartment takibi BOZULDU ‚Äî sayfa yapƒ±sƒ± deƒüi≈üti",
+            send("\u26a0\ufe0f Kyoto Apartment takibi BOZULDU \u2014 sayfa yap\u0131s\u0131 de\u011fi\u015fti",
                  "Sayfadaki oda tablolari bulunamadi, site yapisi degismis.\n"
                  "watch.py guncellenmeli.\n\nSon basarili kontrol: %s\n"
                  "Elle kontrol: %s" % (h["last_ok"] or "hic", URL), "")
