@@ -13,6 +13,7 @@ concurrency:
 
 permissions:
   contents: write           # state.json / health.json geri commit edilecek
+  actions: write            # sure dolunca workflow kendini kapatabilsin
 
 jobs:
   check:
@@ -33,10 +34,20 @@ jobs:
         run: |
           git config user.name  "kyoto-watch"
           git config user.email "actions@github.com"
-          git add state.json health.json 2>/dev/null || true
+          git add state.json health.json stop.flag 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "degisiklik yok, commit atlanidi"
           else
             git commit -m "durum guncellendi: $(date -u '+%Y-%m-%d %H:%M UTC')"
             git push
           fi
+
+      - name: Sure dolduysa takibi kapat
+        if: hashFiles('stop.flag') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Sure doldu - workflow devre disi birakiliyor."
+          gh api -X PUT \
+            "repos/${{ github.repository }}/actions/workflows/watch.yml/disable"
+          echo "Kapatildi. Tekrar baslatmak icin: Actions sekmesi -> Enable workflow"
