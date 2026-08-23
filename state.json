@@ -1,20 +1,11 @@
 {
-  "AVAILABLE | APT20 / C22": {
-    "bucket": "AVAILABLE",
-    "room": "APT20 / C22",
-    "rtype": "PAYLASIMLI",
-    "status": "Available",
-    "date": "-",
-    "rent": "¥55,000",
-    "link": "https://www.kyoto-apartment.com/en/list/ka-20"
-  },
   "AVAILABLE SOON | APT20 / A1": {
     "bucket": "AVAILABLE SOON",
     "room": "APT20 / A1",
     "rtype": "PAYLASIMLI",
     "status": "Available soon",
     "date": "August 28 2026",
-    "rent": "¥53,000",
+    "rent": "¬•53,000",
     "link": "https://www.kyoto-apartment.com/en/list/ka-20"
   },
   "AVAILABLE SOON | APT09 / 201": {
@@ -23,7 +14,7 @@
     "rtype": "PAYLASIMLI",
     "status": "Available soon",
     "date": "August 24 2026",
-    "rent": "¥46,000",
+    "rent": "¬•46,000",
     "link": "https://www.kyoto-apartment.com/en/list/ka-09"
   },
   "AVAILABLE SOON | APT03 / 303": {
@@ -32,7 +23,7 @@
     "rtype": "PAYLASIMLI",
     "status": "Available soon",
     "date": "September 25 2026",
-    "rent": "¥52,000",
+    "rent": "¬•52,000",
     "link": "https://www.kyoto-apartment.com/en/list/ka-03"
   },
   "AVAILABLE SOON | APT03 / 304": {
@@ -41,7 +32,7 @@
     "rtype": "PAYLASIMLI",
     "status": "Available soon",
     "date": "August 31 2026",
-    "rent": "¥35,000",
+    "rent": "¬•35,000",
     "link": "https://www.kyoto-apartment.com/en/list/ka-03"
   },
   "AVAILABLE SOON | APT25 / 104": {
@@ -50,7 +41,7 @@
     "rtype": "PAYLASIMLI",
     "status": "Available soon",
     "date": "September 21 2026",
-    "rent": "¥50,000",
+    "rent": "¬•50,000",
     "link": "https://www.kyoto-apartment.com/en/list/ka-25"
   }
 }
