@@ -34,6 +34,10 @@ CELL_RE = re.compile(r"<td.*?>(.*?)</td>", re.S)
 TAG_RE = re.compile(r"<[^>]+>")
 TYPE_ICONS = (("icon-oneroom", "STUDIO"), ("icon-sharehouse", "PAYLASIMLI"))
 
+# Takip bu tarihte kendini kapatir (dahil). 20 gunluk pencere: 23 Agu - 11 Eyl.
+END_DATE = "2026-09-12"
+STOP_FLAG = "stop.flag"
+
 FAIL_ESCALATE = 3
 PARSE_ESCALATE = 2
 ALERT_EVERY = 6
@@ -258,7 +262,47 @@ def send(subject, text, html):
 
 # ----------------------------------------------------------------- main
 
+def expired():
+    """UTC tarihine gore takip suresi doldu mu."""
+    return datetime.datetime.now(datetime.timezone.utc).date().isoformat() >= END_DATE
+
+
+def finish():
+    """Sure dolunca: bir kez veda maili at, bayragi birak, workflow kapatilsin."""
+    already = os.path.exists(STOP_FLAG)
+    with open(STOP_FLAG, "w") as f:
+        f.write(END_DATE + "\n")
+    if already:
+        print("sure zaten dolmus, mail tekrar atilmadi")
+        return 0
+    txt = ("Kyoto Apartment oda takibi planlandigi gibi sona erdi (%s).\n\n"
+           "Bundan sonra otomatik kontrol YAPILMAYACAK ve yeni oda cikarsa "
+           "mail GELMEYECEK.\n\n"
+           "Devam etmek istersen: repoda Actions sekmesinden \"Kyoto oda takibi\" "
+           "workflow'unu yeniden etkinlestir ve watch.py icindeki END_DATE "
+           "degerini ileri bir tarihe al.\n\n"
+           "Odalari elle kontrol: %s\n" % (END_DATE, URL))
+    html = ('<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;'
+            'color:#222;"><p style="font-size:16px;font-weight:bold;">'
+            '\U0001f3c1 Kyoto Apartment oda takibi sona erdi</p>'
+            '<p>Takip planland\u0131\u011f\u0131 gibi %s tarihinde kapand\u0131. '
+            'Bundan sonra otomatik kontrol <strong>yap\u0131lmayacak</strong> ve yeni '
+            'oda \u00e7\u0131karsa mail <strong>gelmeyecek</strong>.</p>'
+            '<p style="font-size:14px;color:#555;">Devam etmek istersen: repoda '
+            'Actions sekmesinden workflow\u2019u yeniden etkinle\u015ftir ve '
+            '<code>watch.py</code> i\u00e7indeki <code>END_DATE</code> de\u011ferini '
+            'ileri bir tarihe al.</p>'
+            '<p><a href="%s">Odalar\u0131 elle kontrol et</a></p></div>'
+            % (END_DATE, URL))
+    send("\U0001f3c1 Kyoto Apartment takibi sona erdi (%s)" % END_DATE, txt, html)
+    print("sure doldu (%s) -> workflow kapatilacak" % END_DATE)
+    return 0
+
+
 def main():
+    if expired():
+        return finish()
+
     try:
         html = fetch(URL)
     except Exception as e:
