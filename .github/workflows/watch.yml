@@ -1,0 +1,42 @@
+name: Kyoto oda takibi
+
+on:
+  schedule:
+    # Her 10 dakikada bir (UTC). GitHub yogun saatlerde gecikmeli calistirabilir.
+    - cron: "*/10 * * * *"
+  workflow_dispatch:        # "Run workflow" ile elle tetiklemek icin
+
+# Ayni anda iki tur calisip state.json'a yazmasin
+concurrency:
+  group: kyoto-watch
+  cancel-in-progress: false
+
+permissions:
+  contents: write           # state.json / health.json geri commit edilecek
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Odalari kontrol et ve gerekirse mail at
+        env:
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: python3 watch.py
+
+      - name: Durumu repoya isle
+        if: always()        # hata turlarinda da health.json guncellenmeli
+        run: |
+          git config user.name  "kyoto-watch"
+          git config user.email "actions@github.com"
+          git add state.json health.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "degisiklik yok, commit atlanidi"
+          else
+            git commit -m "durum guncellendi: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git push
+          fi
